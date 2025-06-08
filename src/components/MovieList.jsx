@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./movieList.css";
 import MovieCard from "./MovieCard";
-import FIlterMovies from "./FIlterMovies";
+import FilterMovies from "./FIlterMovies";
 import SortMovies from "./SortMovies";
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -73,7 +73,7 @@ const MovieList = () => {
       <header className="movieheader">
         <h2 className="center_el movieh2head">Popular</h2>
         <div className="center_el movie_listadd">
-          <FIlterMovies
+          <FilterMovies
             givingRating={givingRating}
             onRatingButtonClick={handleFilter}
             ratings={[6, 7, 8]}
