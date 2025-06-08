@@ -1,0 +1,65 @@
+.movie_show {
+  width: 300px;
+  height: 450px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  margin: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.movie_show:hover {
+  transform: translateY(-10px);
+}
+
+.movie_img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie_details {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 2rem 1rem 1rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+}
+
+.movie_details_h3 {
+  font-size: 1.25rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+.moviedesc {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.moviedate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: 500;
+  background: linear-gradient(45deg, #ff4b2b2c, #ff416d38);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.emoji_class {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.movierating {
+  position: absolute;
+  left: 15px;
+  top: -10px;
+  color: white;
+  font-size: 1.7rem;
+  font-weight: 600;
+}

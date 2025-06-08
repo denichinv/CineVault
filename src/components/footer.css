@@ -1,0 +1,38 @@
+.footer {
+  background: linear-gradient(to right, #1a1a1a, #2c2c2c);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: white;
+  padding: 1rem 1rem;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.footer-description {
+  color: #ffffff;
+  margin-top: 0.5rem;
+}
+
+.footer-heading {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.footer-copyright {
+  border-top: 1px solid #ffffff;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  text-align: center;
+  color: #ffffff;
+}
