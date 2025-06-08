@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./movieList.css";
 import MovieCard from "./MovieCard";
-import FilterMovies from "./FIlterMovies";
+import FilterMovies from "./FilterMovies";
 import SortMovies from "./SortMovies";
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
