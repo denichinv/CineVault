@@ -3,6 +3,7 @@ import "./movieList.css";
 import MovieCard from "./MovieCard";
 import FilterMovies from "./FilterMovies";
 import SortMovies from "./SortMovies";
+import MovieCardSkeleton from "./MovieCardSkeleton";
 const MovieList = ({ category }) => {
   const [movies, setMovies] = useState([]);
   const [allMoviesFiltered, setAllMoviesFiltered] = useState([]);
@@ -21,12 +22,9 @@ const MovieList = ({ category }) => {
         ? "https://api.themoviedb.org/3/movie/upcoming"
         : `https://api.themoviedb.org/3/movie/${selectedCategory}`;
 
-    console.log("Fetching from:", `${endpoint}?api_key=${API_KEY}`);
-
     const res = await fetch(`${endpoint}?api_key=${API_KEY}`);
     const data = await res.json();
     setMovies(data.results);
-    console.log(data.results);
 
     setAllMoviesFiltered(data.results);
     setLoading(false);
@@ -88,7 +86,7 @@ const MovieList = ({ category }) => {
       </header>
       <div className="movie_shows">
         {loading ? (
-          <p className="noMovies">Loading...</p>
+          Array.from({ length: 6 }).map((_, i) => <MovieCardSkeleton key={i} />)
         ) : movies.length > 0 ? (
           movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
         ) : (
