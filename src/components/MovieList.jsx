@@ -74,7 +74,9 @@ const MovieList = ({ category }) => {
   return (
     <section className="movie_list">
       <header className="movieheader">
-        <h2 className="center_el movieh2head">{category.toUpperCase()}</h2>
+        <h2 className="center_el movieh2head">
+          {category.toUpperCase().replace("_", "-")}
+        </h2>
         <div className="center_el movie_listadd">
           <FilterMovies
             givingRating={givingRating}
