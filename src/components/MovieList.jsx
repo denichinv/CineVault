@@ -3,22 +3,27 @@ import "./movieList.css";
 import MovieCard from "./MovieCard";
 import FilterMovies from "./FilterMovies";
 import SortMovies from "./SortMovies";
-const MovieList = () => {
+const MovieList = ({ category }) => {
   const [movies, setMovies] = useState([]);
   const [allMoviesFiltered, setAllMoviesFiltered] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [givingRating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetchmovies();
-  }, []);
+    fetchmovies(category);
+  }, [category]);
 
-  const fetchmovies = async () => {
+  const fetchmovies = async (selectedCategory = "popular") => {
     const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
-    );
+    const endpoint =
+      selectedCategory === "upcoming"
+        ? "https://api.themoviedb.org/3/movie/upcoming"
+        : `https://api.themoviedb.org/3/movie/${selectedCategory}`;
+
+    console.log("Fetching from:", `${endpoint}?api_key=${API_KEY}`);
+
+    const res = await fetch(`${endpoint}?api_key=${API_KEY}`);
     const data = await res.json();
     setMovies(data.results);
     console.log(data.results);
@@ -71,7 +76,7 @@ const MovieList = () => {
   return (
     <section className="movie_list">
       <header className="movieheader">
-        <h2 className="center_el movieh2head">Popular</h2>
+        <h2 className="center_el movieh2head">{category.toUpperCase()}</h2>
         <div className="center_el movie_listadd">
           <FilterMovies
             givingRating={givingRating}

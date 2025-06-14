@@ -52,3 +52,9 @@
     gap: 1rem;
   }
 }
+
+.navbar_links a.active {
+  font-weight: bold;
+  color: #f39c12;
+  border-bottom: 2px solid #f39c12;
+}
