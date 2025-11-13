@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1762994836914" clover="3.2.0">
+  <project timestamp="1762994836914" name="All files">
+    <metrics statements="8" coveredstatements="6" conditionals="6" coveredconditionals="6" methods="4" coveredmethods="3" elements="18" coveredelements="15" complexity="0" loc="8" ncloc="8" packages="1" files="2" classes="2"/>
+    <file name="Header.jsx" path="/Users/Vilizar/Desktop/GITHUB PROJECTS/CineVault/src/components/Header.jsx">
+      <metrics statements="8" coveredstatements="6" conditionals="6" coveredconditionals="6" methods="4" coveredmethods="3"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="9" type="stmt"/>
+      <line num="12" count="0" type="stmt"/>
+      <line num="13" count="0" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
+      <line num="23" count="1" type="stmt"/>
+      <line num="33" count="1" type="stmt"/>
+      <line num="34" count="1" type="stmt"/>
+    </file>
+    <file name="header.css" path="/Users/Vilizar/Desktop/GITHUB PROJECTS/CineVault/src/components/header.css">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+    </file>
+  </project>
+</coverage>
