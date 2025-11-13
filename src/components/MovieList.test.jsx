@@ -9,17 +9,23 @@ describe("MovieList", () => {
       poster_path: "/fake-poster-1.jpg",
       vote_average: 8.5,
       release_date: "2024-01-15",
-      original_title: "Fake Movie 1",
+      original_title: "High Rated Movie",
     },
     {
       id: 2,
       poster_path: "/fake-poster-2.jpg",
-      vote_average: 7.2,
+      vote_average: 6.2,
       release_date: "2024-02-20",
-      original_title: "Fake Movie 2",
+      original_title: "Low Rated Movie",
+    },
+    {
+      id: 3,
+      poster_path: "/fake-poster-3.jpg",
+      vote_average: 7.8,
+      release_date: "2024-03-10",
+      original_title: "Good Movie",
     },
   ];
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
