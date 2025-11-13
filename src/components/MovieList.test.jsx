@@ -181,4 +181,80 @@ describe("MovieList", () => {
     expect(screen.queryByText("6.5")).not.toBeInTheDocument();
     expect(screen.queryByText("7.2")).not.toBeInTheDocument();
   });
+
+  it("should toggle filter off when clicking active filter", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("8.5")).toBeInTheDocument();
+    });
+    const filter7 = screen.getByText("7+");
+    fireEvent.click(filter7);
+    expect(screen.queryByText("6.2")).not.toBeInTheDocument();
+    fireEvent.click(filter7);
+    await waitFor(() => {
+      expect(screen.getByText("6.2")).toBeInTheDocument();
+    });
+  });
+
+  it("should sort movies by date", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("8.5")).toBeInTheDocument();
+    });
+
+    const sortDropdown = screen.getAllByRole("combobox")[0];
+    fireEvent.change(sortDropdown, { target: { value: "date" } });
+
+    expect(screen.getByText("8.5")).toBeInTheDocument();
+    expect(screen.getByText("6.2")).toBeInTheDocument();
+    expect(screen.getByText("7.8")).toBeInTheDocument();
+  });
+  it("should sort movies in ascending alphabetical order", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("8.5")).toBeInTheDocument();
+    });
+
+    const orderDropdown = screen.getAllByRole("combobox")[1];
+    fireEvent.change(orderDropdown, { target: { value: "ascending" } });
+
+    expect(screen.getByText("8.5")).toBeInTheDocument();
+    expect(screen.getByText("6.2")).toBeInTheDocument();
+  });
+  it("should sort movies in descending alphabetical order", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("8.5")).toBeInTheDocument();
+    });
+
+    const orderDropdown = screen.getAllByRole("combobox")[1];
+    fireEvent.change(orderDropdown, { target: { value: "descending" } });
+
+    expect(screen.getByText("8.5")).toBeInTheDocument();
+    expect(screen.getByText("6.2")).toBeInTheDocument();
+  });
 });
