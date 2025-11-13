@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import MovieList from "./MovieList";
 
@@ -47,7 +47,7 @@ describe("MovieList", () => {
       expect(screen.getByText("8.5")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("7.2")).toBeInTheDocument();
+    expect(screen.getByText("7.8")).toBeInTheDocument();
     expect(screen.getByText("2024-01-15")).toBeInTheDocument();
   });
   it("should fetch from popular endpoint", async () => {
@@ -99,5 +99,86 @@ describe("MovieList", () => {
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining("upcoming")
     );
+  });
+  it("should filter movies by rating when filter button clicked", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("8.5")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("8.5")).toBeInTheDocument();
+    expect(screen.getByText("6.2")).toBeInTheDocument();
+    expect(screen.getByText("7.8")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("7+"));
+
+    expect(screen.getByText("8.5")).toBeInTheDocument();
+    expect(screen.getByText("7.8")).toBeInTheDocument();
+    expect(screen.queryByText("6.2")).not.toBeInTheDocument();
+  });
+  it("should sort movies by selected order from the dropdowns", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("8.5")).toBeInTheDocument();
+    });
+
+    const sortDropdowns = screen.getAllByRole("combobox");
+    const sortByDropdown = sortDropdowns[0];
+
+    fireEvent.change(sortByDropdown, { target: { value: "rating" } });
+
+    expect(screen.getByText("8.5")).toBeInTheDocument();
+    expect(screen.getByText("7.8")).toBeInTheDocument();
+    expect(screen.getByText("6.2")).toBeInTheDocument();
+  });
+  it("should display 'no movies found' message when no movies match filter", async () => {
+    const lowRatedMovies = [
+      {
+        id: 1,
+        poster_path: "/fake.jpg",
+        vote_average: 6.5,
+        release_date: "2024-01-15",
+        original_title: "Low Movie 1",
+      },
+      {
+        id: 2,
+        poster_path: "/fake2.jpg",
+        vote_average: 7.2,
+        release_date: "2024-02-20",
+        original_title: "Low Movie 2",
+      },
+    ];
+
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: lowRatedMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("6.5")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("8+"));
+
+    expect(
+      screen.getByText(/No movies found above this rating!/i)
+    ).toBeInTheDocument();
+
+    expect(screen.queryByText("6.5")).not.toBeInTheDocument();
+    expect(screen.queryByText("7.2")).not.toBeInTheDocument();
   });
 });
