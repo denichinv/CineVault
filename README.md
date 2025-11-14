@@ -1,99 +1,64 @@
 # 🎬 CineVault
 
-A React-based movie discovery app showcasing modern front-end practices like API integration, filtering, sorting, skeleton loading, and responsive UI — powered by The Movie Database (TMDB).
+![Tests](https://github.com/YOUR_USERNAME/cinevault/actions/workflows/test.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-95.52%25-brightgreen)
+
+A modern movie discovery app built with React and the TMDB API. Browse trending, top-rated, and upcoming movies with filtering and sorting.
+
+**🌐 [Live Demo](https://your-netlify-url.netlify.app)**
+
+---
+
+## 📝 Project Note
+
+This is a refactored version with improved structure and comprehensive testing. The [original repository]([link](https://github.com/denichinv/movie-review)) contains full development history. This rebuild fixed deployment issues and added a test suite (95%+ coverage) built over 3-4 weeks while learning React Testing Library.
 
 ---
 
 ## ✨ Features
 
-- 🔥 Browse trending, top-rated, and upcoming movies
-- 🎯 Filter movies by ratings (6+, 7+, 8+)
-- 🔃 Sort by release date, rating, or alphabetically
-- 💀 Skeleton loading placeholders for smooth UX
-- 📱 Fully responsive layout
-- 🧠 Clean code structure using reusable components
+- Browse movies by category (Popular, Top-Rated, Upcoming)
+- Filter by rating (6+, 7+, 8+)
+- Sort by date, rating, or alphabetically
+- Responsive design
+- Fast performance with Vite
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Tech Stack
 
-- ⚛️ React (via Vite)
-- 🎨 CSS (with gradients and hover effects)
-- 🗂 Component-based architecture
-- 🎞️ TMDB API (The Movie Database)
+**Frontend:** React 18, Vite  
+**Testing:** Vitest, React Testing Library (95.52% coverage)  
+**API:** TMDB  
+**CI/CD:** GitHub Actions  
+**Deployment:** Netlify
 
 ---
 
-## 🚀 Getting Started
-
-### 1. Clone and install dependencies
-
+## 🚀 Quick Start
 ```bash
-git clone https://github.com/denichinv/CineVault.git
-cd CineVault
+# Clone and install
+git clone https://github.com/YOUR_USERNAME/cinevault.git
+cd cinevault
 npm install
-```
 
----
+# Add your TMDB API key to .env
+echo "VITE_TMDB_API_KEY=your_key" > .env
 
-### 2. Create a `.env` file in the root folder
-
-```env
-VITE_TMDB_API_KEY=your_tmdb_api_key_here
-```
-
-> 💡 You can get your API key from [TMDB API Docs](https://developer.themoviedb.org/)
-
----
-
-### 3. Start the development server
-
-```bash
+# Run
 npm run dev
 ```
 
-Visit: [http://localhost:5173](http://localhost:5173)
-
 ---
 
-## 🧱 Key Project Structure
-
-```
-📁 src
-├── components/
-│   ├── MovieCard.jsx          # Renders a movie's details
-│   ├── MovieCardSkeleton.jsx  # Skeleton loader while fetching
-│   ├── MovieList.jsx          # Core logic: fetch, filter, sort
-│   ├── FilterMovies.jsx       # Filter by rating
-│   ├── SortMovies.jsx         # Sort dropdown
-│   └── Header.jsx             # Navigation menu (category switching)
-├── App.jsx                    # Root component
-└── main.jsx                   # Entry point
+## 🧪 Testing
+```bash
+npm test                # Run tests
+npm test -- --coverage  # With coverage report
 ```
 
----
-
-## 📸 Screenshot
-
-![Initial View](/screenshots/initial-view.png)
-
-> 📷 Place your screenshot image in the `public/screenshots/` folder
+**Coverage: 95.52%** across all components. Tests run automatically via GitHub Actions on every push.
 
 ---
 
-## 🌐 Live Demo
-
-👉 [View Deployed Site on Netlify](https://your-netlify-link.netlify.app)
-
----
-
-## 📦 Credits
-
-- Data from [The Movie Database (TMDB)](https://www.themoviedb.org/)
-- Developed with ❤️ by Vilizar Denichin
-
----
-
-## 📄 License
-
-MIT © 2025 Vilizar Denichin
+Made with ⚡ by [Vilizar](https://github.com/YOUR_USERNAME)
