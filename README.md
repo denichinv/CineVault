@@ -1,6 +1,6 @@
 # 🎬 CineVault
 
-![Tests](https://github.com/YOUR_USERNAME/cinevault/actions/workflows/test.yml/badge.svg)
+![Tests](https://github.com/denichinv/CineVault/actions/workflows/test.yml/badge.svg)
 ![Coverage](https://img.shields.io/badge/coverage-95.52%25-brightgreen)
 
 A modern movie discovery app built with React and the TMDB API. Browse trending, top-rated, and upcoming movies with filtering and sorting.
