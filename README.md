@@ -5,7 +5,7 @@
 
 A modern movie discovery app built with React and the TMDB API. Browse trending, top-rated, and upcoming movies with filtering and sorting.
 
-**🌐 [Live Demo](https://your-netlify-url.netlify.app)**
+**🌐 [Live Demo](https://cinevaultmoviesapp.netlify.app/)**
 
 ---
 
@@ -38,7 +38,7 @@ This is a refactored version with improved structure and comprehensive testing. 
 ## 🚀 Quick Start
 ```bash
 # Clone and install
-git clone https://github.com/YOUR_USERNAME/cinevault.git
+git clone https://github.com/denichinv/CineVault.git
 cd cinevault
 npm install
 
@@ -61,4 +61,4 @@ npm test -- --coverage  # With coverage report
 
 ---
 
-Made with ⚡ by [Vilizar](https://github.com/YOUR_USERNAME)
+Made with ⚡ by [Vilizar](https://github.com/denichinv)
