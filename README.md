@@ -11,7 +11,7 @@ A modern movie discovery app built with React and the TMDB API. Browse trending,
 
 ## 📝 Project Note
 
-This is a refactored version with improved structure and comprehensive testing. The [original repository]([link](https://github.com/denichinv/movie-review)) contains full development history. This rebuild fixed deployment issues and added a test suite (95%+ coverage) built over 3-4 weeks while learning React Testing Library.
+This is a refactored version with improved structure and comprehensive testing. The [original repository](https://github.com/denichinv/movie-review) contains full development history. This rebuild fixed deployment issues and added a test suite (95%+ coverage) built over 3-4 weeks while learning React Testing Library.
 
 ---
 
