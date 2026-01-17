@@ -10,7 +10,9 @@ function App() {
   return (
     <>
       <Header setCategory={setCategory} category={category} />
-      <MovieList category={category} />
+      <main className="main-content">
+        <MovieList category={category} />
+      </main>
       <Footer />
     </>
   );

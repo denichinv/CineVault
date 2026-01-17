@@ -2,6 +2,17 @@
   font-family: "Montserrat";
   src: url(./assets/fonts/Montserrat-VariableFont_wght_1_.woff) format("woff");
 }
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 body {
   font-family: "Montserrat", sans-serif;
