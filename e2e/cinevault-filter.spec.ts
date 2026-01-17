@@ -1,0 +1,12 @@
+import { test, expect } from "@playwright/test";
+
+test("CineVault: user can apply rating filter", async ({ page }) => {
+  await page.goto("https://cinevaultmoviesapp.netlify.app/");
+
+  const moviesSection = page.locator(".movie_show");
+  await expect(moviesSection.first()).toBeVisible();
+
+  await page.getByText("8+").click();
+
+  await expect(page.locator("text=POPULAR")).toBeVisible();
+});
