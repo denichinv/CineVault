@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("CineVault: user can apply sorting", () => {
   test("changing Ascending to Descending", async ({ page }) => {
-    await page.goto("https://cinevaultmoviesapp.netlify.app/");
+    await page.goto("/");
     const firstMovie = page.locator(".movie").first();
     await expect(firstMovie).toBeVisible();
     const firstMovieTextBefore = await firstMovie.textContent();
