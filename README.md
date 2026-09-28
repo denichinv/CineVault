@@ -63,11 +63,13 @@ cd CineVault
 npm install
 ```
 
-Create a `.env` file and add your TMDB API key:
+Create a local `.env` file and add your TMDB API key. This key should never be committed to Git or shared publicly.
 
 ```bash
 VITE_TMDB_API_KEY=your_api_key_here
 ```
+
+If you are deploying this app, keep the key in a secure environment variable on the hosting platform instead of exposing it in browser code.
 
 Run the app locally:
 

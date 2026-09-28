@@ -10,6 +10,8 @@ const MovieList = ({ category }) => {
   const [sortBy, setSortBy] = useState("");
   const [givingRating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     fetchmovies(category);
   }, [category]);
@@ -17,17 +19,39 @@ const MovieList = ({ category }) => {
   const fetchmovies = async (selectedCategory = "popular") => {
     const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
-    const endpoint =
-      selectedCategory === "upcoming"
-        ? "https://api.themoviedb.org/3/movie/upcoming"
-        : `https://api.themoviedb.org/3/movie/${selectedCategory}`;
+    if (!API_KEY) {
+      setLoading(false);
+      setError("TMDB API key is missing. Add VITE_TMDB_API_KEY to a local .env file.");
+      return;
+    }
 
-    const res = await fetch(`${endpoint}?api_key=${API_KEY}`);
-    const data = await res.json();
-    setMovies(data.results);
+    setError("");
+    setLoading(true);
 
-    setAllMoviesFiltered(data.results);
-    setLoading(false);
+    try {
+      const endpoint =
+        selectedCategory === "upcoming"
+          ? "https://api.themoviedb.org/3/movie/upcoming"
+          : `https://api.themoviedb.org/3/movie/${selectedCategory}`;
+
+      const res = await fetch(`${endpoint}?api_key=${API_KEY}`);
+
+      if (!res.ok) {
+        throw new Error(`TMDB request failed with status ${res.status}`);
+      }
+
+      const data = await res.json();
+      const results = Array.isArray(data.results) ? data.results : [];
+      setMovies(results);
+      setAllMoviesFiltered(results);
+      setLoading(false);
+    } catch (err) {
+      console.error("Movie fetch error:", err);
+      setMovies([]);
+      setAllMoviesFiltered([]);
+      setLoading(false);
+      setError("Could not load movies right now. Please try again later.");
+    }
   };
 
   const handleFilter = (rating) => {
@@ -89,6 +113,8 @@ const MovieList = ({ category }) => {
       <div className="movie_shows">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <MovieCardSkeleton key={i} />)
+        ) : error ? (
+          <p className="noMovies">{error}</p>
         ) : movies.length > 0 ? (
           movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
         ) : (

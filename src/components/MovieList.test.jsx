@@ -28,6 +28,9 @@ describe("MovieList", () => {
   ];
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
+    vi.stubEnv("VITE_TMDB_API_KEY", "test-api-key");
+    global.fetch = vi.fn();
   });
 
   it("should display loading skeletons then show movies", async () => {
@@ -256,5 +259,19 @@ describe("MovieList", () => {
 
     expect(screen.getByText("8.5")).toBeInTheDocument();
     expect(screen.getByText("6.2")).toBeInTheDocument();
+  });
+
+  it("should show a helpful message when the TMDB API key is missing", async () => {
+    vi.stubEnv("VITE_TMDB_API_KEY", "");
+
+    render(<MovieList category="popular" />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/TMDB API key is missing/i)
+      ).toBeInTheDocument();
+    });
+
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });
