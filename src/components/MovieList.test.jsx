@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import MovieList from "./MovieList";
 
 describe("MovieList", () => {
@@ -30,7 +30,13 @@ describe("MovieList", () => {
     vi.clearAllMocks();
     vi.unstubAllEnvs();
     vi.stubEnv("VITE_TMDB_API_KEY", "test-api-key");
-    global.fetch = vi.fn();
+    vi.stubGlobal("fetch", vi.fn());
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it("should display loading skeletons then show movies", async () => {
@@ -273,5 +279,49 @@ describe("MovieList", () => {
     });
 
     expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("does not request movies with a whitespace-only key", async () => {
+    vi.stubEnv("VITE_TMDB_API_KEY", "   ");
+    render(<MovieList category="popular" />);
+    expect(await screen.findByRole("alert")).toHaveTextContent(/API key is missing/);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("shows a visitor-facing configuration error in production", async () => {
+    vi.stubEnv("VITE_TMDB_API_KEY", "");
+    vi.stubEnv("DEV", false);
+    render(<MovieList category="popular" />);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Movies are temporarily unavailable");
+    expect(screen.queryByText(/VITE_TMDB_API_KEY/)).not.toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["HTTP failure", () => Promise.resolve({ ok: false, status: 401 })],
+    ["network failure", () => Promise.reject(new Error("Offline"))],
+    ["invalid JSON", () => Promise.resolve({ ok: true, json: async () => { throw new SyntaxError("Invalid JSON"); } })],
+    ["missing results", () => Promise.resolve({ ok: true, json: async () => ({}) })],
+    ["null response", () => Promise.resolve({ ok: true, json: async () => null })],
+  ])("shows an error and recovers after %s", async (_, failure) => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    fetch.mockImplementationOnce(failure).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+    const { rerender, container } = render(<MovieList category="popular" />);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Could not load movies");
+    expect(container.querySelector(".skeleton-card")).toBeNull();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    rerender(<MovieList category="top_rated" />);
+    expect(await screen.findByText("8.5")).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("treats an empty results array as an empty list, not a request failure", async () => {
+    fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ results: [] }) });
+    render(<MovieList category="popular" />);
+    expect(await screen.findByText(/No movies found/)).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });

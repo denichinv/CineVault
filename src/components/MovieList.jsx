@@ -17,11 +17,13 @@ const MovieList = ({ category }) => {
   }, [category]);
 
   const fetchmovies = async (selectedCategory = "popular") => {
-    const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+    const API_KEY = import.meta.env.VITE_TMDB_API_KEY?.trim();
 
     if (!API_KEY) {
       setLoading(false);
-      setError("TMDB API key is missing. Add VITE_TMDB_API_KEY to a local .env file.");
+      setError(import.meta.env.DEV
+        ? "TMDB API key is missing. Add VITE_TMDB_API_KEY to a local .env file."
+        : "Movies are temporarily unavailable. Please try again later.");
       return;
     }
 
@@ -41,7 +43,10 @@ const MovieList = ({ category }) => {
       }
 
       const data = await res.json();
-      const results = Array.isArray(data.results) ? data.results : [];
+      if (!Array.isArray(data?.results)) {
+        throw new Error("Invalid TMDB response");
+      }
+      const results = data.results;
       setMovies(results);
       setAllMoviesFiltered(results);
       setLoading(false);
@@ -114,7 +119,7 @@ const MovieList = ({ category }) => {
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <MovieCardSkeleton key={i} />)
         ) : error ? (
-          <p className="noMovies">{error}</p>
+          <p className="noMovies" role="alert">{error}</p>
         ) : movies.length > 0 ? (
           movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
         ) : (

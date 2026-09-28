@@ -69,7 +69,9 @@ Create a local `.env` file and add your TMDB API key. This key should never be c
 VITE_TMDB_API_KEY=your_api_key_here
 ```
 
-If you are deploying this app, keep the key in a secure environment variable on the hosting platform instead of exposing it in browser code.
+For deployment, set `VITE_TMDB_API_KEY` in the hosting platform's build environment and rebuild the app. Restart the dev server after changing a local `.env` file.
+
+**Client-side visibility:** Vite embeds `VITE_*` values in the browser bundle. Hosting environment variables keep the key out of Git, but do not hide it from visitors. Keeping a key private requires a backend or serverless proxy that reads a server-only environment variable. See [Vite's environment variable documentation](https://vite.dev/guide/env-and-mode#env-variables).
 
 Run the app locally:
 
