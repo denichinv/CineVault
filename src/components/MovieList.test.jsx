@@ -72,7 +72,7 @@ describe("MovieList", () => {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining("popular")
+      expect.stringContaining("popular"),
     );
   });
 
@@ -89,7 +89,7 @@ describe("MovieList", () => {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining("top_rated")
+      expect.stringContaining("top_rated"),
     );
   });
 
@@ -106,7 +106,7 @@ describe("MovieList", () => {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining("upcoming")
+      expect.stringContaining("upcoming"),
     );
   });
   it("should filter movies by rating when filter button clicked", async () => {
@@ -184,7 +184,7 @@ describe("MovieList", () => {
     fireEvent.click(screen.getByText("8+"));
 
     expect(
-      screen.getByText(/No movies found above this rating!/i)
+      screen.getByText(/No movies found above this rating!/i),
     ).toBeInTheDocument();
 
     expect(screen.queryByText("6.5")).not.toBeInTheDocument();
@@ -273,9 +273,7 @@ describe("MovieList", () => {
     render(<MovieList category="popular" />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/TMDB API key is missing/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/TMDB API key is missing/i)).toBeInTheDocument();
     });
 
     expect(global.fetch).not.toHaveBeenCalled();
@@ -284,7 +282,9 @@ describe("MovieList", () => {
   it("does not request movies with a whitespace-only key", async () => {
     vi.stubEnv("VITE_TMDB_API_KEY", "   ");
     render(<MovieList category="popular" />);
-    expect(await screen.findByRole("alert")).toHaveTextContent(/API key is missing/);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /API key is missing/,
+    );
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -292,7 +292,9 @@ describe("MovieList", () => {
     vi.stubEnv("VITE_TMDB_API_KEY", "");
     vi.stubEnv("DEV", false);
     render(<MovieList category="popular" />);
-    expect(await screen.findByRole("alert")).toHaveTextContent("Movies are temporarily unavailable");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Movies are temporarily unavailable",
+    );
     expect(screen.queryByText(/VITE_TMDB_API_KEY/)).not.toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -300,9 +302,24 @@ describe("MovieList", () => {
   it.each([
     ["HTTP failure", () => Promise.resolve({ ok: false, status: 401 })],
     ["network failure", () => Promise.reject(new Error("Offline"))],
-    ["invalid JSON", () => Promise.resolve({ ok: true, json: async () => { throw new SyntaxError("Invalid JSON"); } })],
-    ["missing results", () => Promise.resolve({ ok: true, json: async () => ({}) })],
-    ["null response", () => Promise.resolve({ ok: true, json: async () => null })],
+    [
+      "invalid JSON",
+      () =>
+        Promise.resolve({
+          ok: true,
+          json: async () => {
+            throw new SyntaxError("Invalid JSON");
+          },
+        }),
+    ],
+    [
+      "missing results",
+      () => Promise.resolve({ ok: true, json: async () => ({}) }),
+    ],
+    [
+      "null response",
+      () => Promise.resolve({ ok: true, json: async () => null }),
+    ],
   ])("shows an error and recovers after %s", async (_, failure) => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     fetch.mockImplementationOnce(failure).mockResolvedValueOnce({
@@ -310,7 +327,9 @@ describe("MovieList", () => {
       json: async () => ({ results: mockMovies }),
     });
     const { rerender, container } = render(<MovieList category="popular" />);
-    expect(await screen.findByRole("alert")).toHaveTextContent("Could not load movies");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Could not load movies",
+    );
     expect(container.querySelector(".skeleton-card")).toBeNull();
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     rerender(<MovieList category="top_rated" />);
@@ -319,9 +338,35 @@ describe("MovieList", () => {
   });
 
   it("treats an empty results array as an empty list, not a request failure", async () => {
-    fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ results: [] }) });
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: [] }),
+    });
     render(<MovieList category="popular" />);
     expect(await screen.findByText(/No movies found/)).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("preserves rating sort when a rating filter changes", async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: mockMovies }),
+    });
+
+    render(<MovieList category="popular" />);
+
+    await screen.findByText("8.5");
+
+    fireEvent.change(screen.getAllByRole("combobox")[0], {
+      target: { value: "rating" },
+    });
+
+    fireEvent.click(screen.getByText("6+"));
+
+    const displayedRatings = screen
+      .getAllByRole("link")
+      .map((link) => parseFloat(link.textContent));
+
+    expect(displayedRatings).toEqual([8.5, 7.8, 6.2]);
   });
 });
