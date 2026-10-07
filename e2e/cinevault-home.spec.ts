@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 
 test.describe("CineVault - Home", () => {
   test("home page loads and shows movies", async ({ page }) => {

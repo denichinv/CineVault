@@ -143,8 +143,9 @@ describe("MovieList", () => {
       expect(screen.getByText("8.5")).toBeInTheDocument();
     });
 
-    const sortDropdowns = screen.getAllByRole("combobox");
-    const sortByDropdown = sortDropdowns[0];
+    const sortByDropdown = screen.getByRole("combobox", {
+      name: "Sort movies",
+    });
 
     fireEvent.change(sortByDropdown, { target: { value: "rating" } });
 
@@ -223,7 +224,7 @@ describe("MovieList", () => {
       expect(screen.getByText("8.5")).toBeInTheDocument();
     });
 
-    const sortDropdown = screen.getAllByRole("combobox")[0];
+    const sortDropdown = screen.getByRole("combobox", { name: "Sort movies" });
     fireEvent.change(sortDropdown, { target: { value: "date" } });
 
     expect(screen.getByText("8.5")).toBeInTheDocument();
@@ -242,7 +243,7 @@ describe("MovieList", () => {
       expect(screen.getByText("8.5")).toBeInTheDocument();
     });
 
-    const orderDropdown = screen.getAllByRole("combobox")[1];
+    const orderDropdown = screen.getByRole("combobox", { name: "Sort movies" });
     fireEvent.change(orderDropdown, { target: { value: "ascending" } });
 
     expect(screen.getByText("8.5")).toBeInTheDocument();
@@ -260,7 +261,7 @@ describe("MovieList", () => {
       expect(screen.getByText("8.5")).toBeInTheDocument();
     });
 
-    const orderDropdown = screen.getAllByRole("combobox")[1];
+    const orderDropdown = screen.getByRole("combobox", { name: "Sort movies" });
     fireEvent.change(orderDropdown, { target: { value: "descending" } });
 
     expect(screen.getByText("8.5")).toBeInTheDocument();
@@ -357,7 +358,7 @@ describe("MovieList", () => {
 
     await screen.findByText("8.5");
 
-    fireEvent.change(screen.getAllByRole("combobox")[0], {
+    fireEvent.change(screen.getByRole("combobox", { name: "Sort movies" }), {
       target: { value: "rating" },
     });
 
