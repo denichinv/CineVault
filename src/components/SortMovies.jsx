@@ -2,29 +2,19 @@ import React from "react";
 
 const SortMovies = ({ sortBy, handleSort }) => {
   return (
-    <>
-      <select
-        name=""
-        id=""
-        value={sortBy}
-        onChange={handleSort}
-        className="movie_sorting"
-      >
-        <option value="">Sort By</option>
-        <option value="date">Date</option>
-        <option value="rating">Rating</option>
-      </select>
-      <select
-        name=""
-        id=""
-        value={sortBy}
-        onChange={handleSort}
-        className="movie_sorting"
-      >
-        <option value="ascending">Ascending</option>
-        <option value="descending">Descending</option>
-      </select>
-    </>
+    <select
+      name="sort"
+      aria-label="Sort movies"
+      value={sortBy}
+      onChange={handleSort}
+      className="movie_sorting"
+    >
+      <option value="">Default order</option>
+      <option value="date">Newest releases</option>
+      <option value="rating">Highest rated</option>
+      <option value="ascending">Title A–Z</option>
+      <option value="descending">Title Z–A</option>
+    </select>
   );
 };
 

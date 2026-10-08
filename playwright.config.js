@@ -26,7 +26,7 @@ export default defineConfig({
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: "https://cinevaultmoviesapp.netlify.app",
+    baseURL: "http://127.0.0.1:4173",
     serviceWorkers: "block",
     trace: "on-first-retry",
   },
@@ -59,10 +59,10 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    command: "npm run dev -- --host 127.0.0.1 --port 4173 --strictPort",
+    url: "http://127.0.0.1:4173",
+    reuseExistingServer: false,
+    env: { VITE_TMDB_API_KEY: "playwright-test-key" },
+  },
 });

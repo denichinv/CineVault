@@ -1,44 +1,49 @@
-import { expect, it, vi } from "vitest";
-import SortMovies from "./SortMovies";
+import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import SortMovies from "./SortMovies";
 
-describe("SortMovies component test", () => {
-  const mockCallback = vi.fn();
+describe("SortMovies", () => {
+  it("renders one labelled sorting dropdown", () => {
+    render(<SortMovies sortBy="" handleSort={vi.fn()} />);
 
-  it("Both dropdowns render", () => {
-    render(<SortMovies sortBy={""} handleSort={mockCallback} />);
-
-    expect(screen.getAllByRole("combobox")[0]).toHaveTextContent("Sort By");
-    expect(screen.getAllByRole("combobox")[1]).toHaveTextContent("Ascending");
-  });
-  it("Checks if the options exist", () => {
-    render(<SortMovies sortBy={""} handleSort={mockCallback} />);
-
-    expect(screen.getByRole("option", { name: "Sort By" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Date" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Rating" })).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: "Ascending" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("option", { name: "Descending" })
-    ).toBeInTheDocument();
+    expect(screen.getAllByRole("combobox")).toHaveLength(1);
+    expect(screen.getByRole("combobox", { name: "Sort movies" })).toHaveValue(
+      "",
+    );
   });
 
-  it("Displays current sortBy value", () => {
-    render(<SortMovies sortBy="rating" handleSort={mockCallback} />);
+  it("offers all supported sorting options", () => {
+    render(<SortMovies sortBy="" handleSort={vi.fn()} />);
 
-    const dropdowns = screen.getAllByRole("combobox");
-    expect(dropdowns[0]).toHaveValue("rating");
+    const options = screen.getAllByRole("option");
+
+    expect(options.map((option) => option.textContent)).toEqual([
+      "Default order",
+      "Newest releases",
+      "Highest rated",
+      "Title A–Z",
+      "Title Z–A",
+    ]);
   });
 
-  it("Call handlesort on change", () => {
-    render(<SortMovies sortBy="" handleSort={mockCallback} />);
+  it("displays the selected sorting option", () => {
+    render(<SortMovies sortBy="rating" handleSort={vi.fn()} />);
 
-    const dropdown = screen.getAllByRole("combobox")[0];
+    expect(screen.getByRole("combobox", { name: "Sort movies" })).toHaveValue(
+      "rating",
+    );
+  });
 
-    fireEvent.change(dropdown, { target: { value: "date" } });
+  it("passes the selected value to the change handler", () => {
+    const onSelection = vi.fn();
+    const handleSort = (event) => onSelection(event.target.value);
 
-    expect(mockCallback).toHaveBeenCalledOnce();
+    render(<SortMovies sortBy="" handleSort={handleSort} />);
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Sort movies" }), {
+      target: { value: "date" },
+    });
+
+    expect(onSelection).toHaveBeenCalledExactlyOnceWith("date");
   });
 });

@@ -5,7 +5,6 @@ import FilterMovies from "./FilterMovies";
 import SortMovies from "./SortMovies";
 import MovieCardSkeleton from "./MovieCardSkeleton";
 const MovieList = ({ category }) => {
-  const [movies, setMovies] = useState([]);
   const [allMoviesFiltered, setAllMoviesFiltered] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [givingRating, setRating] = useState(0);
@@ -47,12 +46,10 @@ const MovieList = ({ category }) => {
         throw new Error("Invalid TMDB response");
       }
       const results = data.results;
-      setMovies(results);
       setAllMoviesFiltered(results);
       setLoading(false);
     } catch (err) {
       console.error("Movie fetch error:", err);
-      setMovies([]);
       setAllMoviesFiltered([]);
       setLoading(false);
       setError("Could not load movies right now. Please try again later.");
@@ -60,46 +57,40 @@ const MovieList = ({ category }) => {
   };
 
   const handleFilter = (rating) => {
-    if (givingRating == rating) {
-      setRating(0);
-      setMovies(allMoviesFiltered);
-    } else {
-      setRating(rating);
-      const filteredMovies = allMoviesFiltered.filter(
-        (movie) => movie.vote_average >= rating
-      );
-      setMovies(filteredMovies);
-    }
+    setRating((currentRating) => (currentRating === rating ? 0 : rating));
   };
 
   const handleSort = (e) => {
-    const value = e.target.value;
-    setSortBy(value);
+    setSortBy(e.target.value);
+  };
 
-    if (value === "date") {
-      const sortedMovies = [...movies].sort(
+  const movies = allMoviesFiltered.filter(
+    (movie) => movie.vote_average >= givingRating
+  );
+
+  switch (sortBy) {
+    case "date":
+      movies.sort(
         (a, b) => new Date(b.release_date) - new Date(a.release_date)
       );
-      setMovies(sortedMovies);
-    } else if (value === "rating") {
-      const sortedMovies = [...movies].sort(
-        (a, b) => b.vote_average - a.vote_average
-      );
-      setMovies(sortedMovies);
-    } else if (value === "ascending") {
-      const sortedMovies = [...movies].sort((a, b) =>
+      break;
+    case "rating":
+      movies.sort((a, b) => b.vote_average - a.vote_average);
+      break;
+    case "ascending":
+      movies.sort((a, b) =>
         a.original_title.localeCompare(b.original_title)
       );
-      setMovies(sortedMovies);
-    } else if (value === "descending") {
-      const sortedMovies = [...movies].sort((a, b) =>
+      break;
+    case "descending":
+      movies.sort((a, b) =>
         b.original_title.localeCompare(a.original_title)
       );
-      setMovies(sortedMovies);
-    } else {
-      setMovies(allMoviesFiltered);
-    }
-  };
+      break;
+    default:
+      break;
+  }
+
   return (
     <section className="movie_list">
       <header className="movieheader">
