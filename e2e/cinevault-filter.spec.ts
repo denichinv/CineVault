@@ -9,5 +9,5 @@ test("CineVault: user can apply rating filter", async ({ page }) => {
   await expect(page.locator(".movie_show")).toHaveCount(3);
   await page.getByText("8+").click();
 
-  await expect(page.locator(".movierating")).toHaveText(["8.8"]);
+  await expect(page.getByRole("heading", { level: 3 })).toHaveText(["Alpha"]);
 });
