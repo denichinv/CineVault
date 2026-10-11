@@ -65,49 +65,6 @@ const MovieList = ({ category }) => {
     };
   }, [category]);
 
-  const fetchmovies = async (selectedCategory = "popular") => {
-    const API_KEY = import.meta.env.VITE_TMDB_API_KEY?.trim();
-
-    if (!API_KEY) {
-      setLoading(false);
-      setError(
-        import.meta.env.DEV
-          ? "TMDB API key is missing. Add VITE_TMDB_API_KEY to a local .env file."
-          : "Movies are temporarily unavailable. Please try again later.",
-      );
-      return;
-    }
-
-    setError("");
-    setLoading(true);
-
-    try {
-      const endpoint =
-        selectedCategory === "upcoming"
-          ? "https://api.themoviedb.org/3/movie/upcoming"
-          : `https://api.themoviedb.org/3/movie/${selectedCategory}`;
-
-      const res = await fetch(`${endpoint}?api_key=${API_KEY}`);
-
-      if (!res.ok) {
-        throw new Error(`TMDB request failed with status ${res.status}`);
-      }
-
-      const data = await res.json();
-      if (!Array.isArray(data?.results)) {
-        throw new Error("Invalid TMDB response");
-      }
-      const results = data.results;
-      setAllMoviesFiltered(results);
-      setLoading(false);
-    } catch (err) {
-      console.error("Movie fetch error:", err);
-      setAllMoviesFiltered([]);
-      setLoading(false);
-      setError("Could not load movies right now. Please try again later.");
-    }
-  };
-
   const handleFilter = (rating) => {
     setRating((currentRating) => (currentRating === rating ? 0 : rating));
   };

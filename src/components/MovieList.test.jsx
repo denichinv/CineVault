@@ -63,7 +63,7 @@ describe("MovieList", () => {
     });
 
     expect(screen.getByText("7.8")).toBeInTheDocument();
-    expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+    expect(screen.getAllByText("2024")).toHaveLength(3);
   });
   it("should fetch from popular endpoint", async () => {
     global.fetch = vi.fn().mockResolvedValueOnce({
@@ -370,11 +370,15 @@ describe("MovieList", () => {
 
     fireEvent.click(screen.getByText("6+"));
 
-    const displayedRatings = screen
-      .getAllByRole("link")
-      .map((link) => parseFloat(link.textContent));
+    const displayedTitles = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((heading) => heading.textContent);
 
-    expect(displayedRatings).toEqual([8.5, 7.8, 6.2]);
+    expect(displayedTitles).toEqual([
+      "High Rated Movie",
+      "Good Movie",
+      "Low Rated Movie",
+    ]);
   });
   it("keeps the current category's movies when an older request finishes last", async () => {
     let resolvePopular;

@@ -90,12 +90,41 @@
 
 .movie_shows {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 32px 24px;
   padding: 1rem;
-  place-items: center;
+  align-items: start;
 }
 
+@media (max-width: 600px) {
+  .movie_list {
+    padding: 1rem;
+  }
+
+  .movieheader {
+    padding: 1rem 0;
+  }
+
+  .movie_shows {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 12px;
+    padding: 0;
+  }
+
+  .movie_title {
+    font-size: 0.875rem;
+  }
+
+  .movie_metadata {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .movie_shows {
+    grid-template-columns: 1fr;
+  }
+}
 .noMovies {
   margin: 60px 0;
   text-align: center;

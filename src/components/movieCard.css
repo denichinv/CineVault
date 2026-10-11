@@ -1,130 +1,167 @@
 .movie {
-  overflow: hidden;
-}
-.movie_show {
-  width: 300px;
-  height: 450px;
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  min-width: 0;
 }
 
-.movie_show:hover {
-  transform: translateY(-10px);
+.movie_show {
+  display: block;
+  color: #ffffff;
+  text-align: left;
+  text-decoration: none;
+  border-radius: 12px;
+}
+
+.movie_poster {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #2c2c2c;
+  border-radius: 12px;
+  background: #1c1c1c;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .movie_img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 240ms ease;
 }
 
 .movie_details {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 2rem 1rem 1rem;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  padding: 14px 2px 0;
 }
 
-.movie_details_h3 {
-  font-size: 1.25rem;
-  color: white;
-  margin-bottom: 0.5rem;
+.movie_title {
+  margin: 0;
+  min-height: 2.8em;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
-.moviedesc {
+
+.movie_metadata {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
 }
 
 .moviedate {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1.3rem;
-  font-weight: 500;
-  background: linear-gradient(45deg, #ff4b2b2c, #ff416d38);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.emoji_class {
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .movierating {
-  position: absolute;
-  left: 15px;
-  top: -10px;
-  color: white;
-  font-size: 1.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
   font-weight: 600;
 }
 
+.movie_star {
+  color: #f39c12;
+}
+
+.movie_poster_fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.movie_show:focus-visible {
+  outline: 2px solid #ff416c;
+  outline-offset: 6px;
+}
+
+.movie_show:active .movie_poster {
+  border-color: #ff416c;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .movie_show:hover .movie_poster {
+    border-color: #ff4b2b;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .movie_show:hover .movie_img {
+    transform: scale(1.025);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .movie_poster,
+  .movie_img {
+    transition: none;
+  }
+
+  .movie_show:hover .movie_img {
+    transform: none;
+  }
+}
 /* Skeleton cards  */
 .skeleton-card {
-  width: 300px;
-  height: 450px;
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 1rem;
-  background: #1c1c1c;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  min-width: 0;
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 37%, #e0e0e0 63%);
-  animation: shimmer 1.2s infinite;
-  background-size: 1000px 100%;
-  border-radius: 5px;
-  margin-bottom: 10px;
+  background: #2c2c2c;
+  animation: movie-pulse 1.6s ease-in-out infinite;
 }
+
 .skeleton.thumbnail {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0;
-  background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+  aspect-ratio: 2 / 3;
+  box-sizing: border-box;
+  border: 1px solid #2c2c2c;
+  border-radius: 12px;
 }
 
 .skeleton.title {
-  position: absolute;
-  bottom: 70px;
-  left: 15px;
-  width: 70%;
-  height: 20px;
-  background: #555;
+  width: 80%;
+  height: 1em;
+  border-radius: 4px;
 }
 
 .skeleton.subtitle {
-  position: absolute;
-  bottom: 40px;
-  left: 15px;
-  width: 50%;
-  height: 16px;
-  background: #444;
+  width: 35%;
+  height: 1em;
+  border-radius: 4px;
 }
 
 .skeleton.rating {
-  position: absolute;
-  left: 15px;
-  top: 10px;
-  width: 40px;
-  height: 20px;
-  background: #666;
+  width: 20%;
+  height: 1em;
+  border-radius: 4px;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
+@keyframes movie-pulse {
+  0%,
   100% {
-    background-position: 1000px 0;
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
   }
 }
