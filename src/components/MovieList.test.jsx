@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import MovieList from "./MovieList";
 
@@ -373,5 +379,34 @@ describe("MovieList", () => {
       "Good Movie",
       "Low Rated Movie",
     ]);
+  });
+  it("keeps the current category's movies when an older request finishes last", async () => {
+    let resolvePopular;
+
+    const popularRequest = new Promise((resolve) => {
+      resolvePopular = resolve;
+    });
+
+    fetch.mockReturnValueOnce(popularRequest).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ results: [mockMovies[1]] }),
+    });
+
+    const { rerender } = render(<MovieList category="popular" />);
+
+    rerender(<MovieList category="upcoming" />);
+
+    expect(await screen.findByText("6.2")).toBeInTheDocument();
+
+    await act(async () => {
+      resolvePopular({
+        ok: true,
+        json: async () => ({ results: [mockMovies[0]] }),
+      });
+      await popularRequest;
+    });
+
+    expect(screen.getByText("6.2")).toBeInTheDocument();
+    expect(screen.queryByText("8.5")).not.toBeInTheDocument();
   });
 });
