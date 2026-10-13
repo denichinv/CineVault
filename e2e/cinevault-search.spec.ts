@@ -55,3 +55,51 @@ test("searches with Enter and restores the category with Clear", async ({
     page.getByRole("heading", { level: 2, name: "Popular", exact: true }),
   ).toBeVisible();
 });
+
+test("category navigation clears search, including the active category", async ({
+  page,
+}) => {
+  await page.route("https://api.themoviedb.org/3/search/movie?*", (route) =>
+    route.fulfill({
+      json: {
+        results: [
+          {
+            id: 603,
+            original_title: "The Matrix",
+            vote_average: 8.2,
+            release_date: "1999-03-31",
+            poster_path: "/matrix.svg",
+          },
+        ],
+      },
+    }),
+  );
+
+  await page.goto("/");
+
+  const input = page.getByRole("searchbox", { name: "Search movies" });
+  const titles = page.getByRole("heading", { level: 3 });
+
+  await expect(titles).toHaveText(["Bravo", "Zulu", "Alpha"]);
+
+  // First switch categories, then click that same category again.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    await input.fill("The Matrix");
+    await input.press("Enter");
+    await expect(titles).toHaveText(["The Matrix"]);
+
+    const categoryRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return url.pathname === "/3/movie/top_rated";
+    });
+
+    await page.getByRole("link", { name: "Top-Rated", exact: true }).click();
+    await categoryRequest;
+
+    await expect(input).toHaveValue("");
+    await expect(
+      page.getByRole("heading", { level: 2, name: "Top-rated", exact: true }),
+    ).toBeVisible();
+    await expect(titles).toHaveText(["Bravo", "Zulu", "Alpha"]);
+  }
+});

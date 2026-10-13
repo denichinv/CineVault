@@ -6,7 +6,23 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import MovieList from "./MovieList";
+import { useState } from "react";
+import MovieListComponent from "./MovieList";
+
+function MovieList({ category }) {
+  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  return (
+    <MovieListComponent
+      category={category}
+      query={query}
+      setQuery={setQuery}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+    />
+  );
+}
 
 describe("MovieList", () => {
   const mockMovies = [

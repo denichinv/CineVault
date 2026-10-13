@@ -5,14 +5,18 @@ import FilterMovies from "./FilterMovies";
 import SortMovies from "./SortMovies";
 import MovieCardSkeleton from "./MovieCardSkeleton";
 import SearchMovies from "./SearchMovies";
-const MovieList = ({ category }) => {
+const MovieList = ({
+  category,
+  query,
+  setQuery,
+  searchQuery,
+  setSearchQuery,
+}) => {
   const [allMoviesFiltered, setAllMoviesFiltered] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [givingRating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     let ignore = false;
@@ -115,7 +119,11 @@ const MovieList = ({ category }) => {
         <h2 className="movieh2head">
           {searchQuery
             ? `Results for “${searchQuery}”`
-            : { popular: "Popular", top_rated: "Top-rated", upcoming: "Upcoming" }[category]}
+            : {
+                popular: "Popular",
+                top_rated: "Top-rated",
+                upcoming: "Upcoming",
+              }[category]}
         </h2>
         <SearchMovies
           query={query}
