@@ -17,7 +17,7 @@ const MovieList = ({
   const [givingRating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [resultsQuery, setResultsQuery] = useState("");
   useEffect(() => {
     let ignore = false;
 
@@ -64,6 +64,7 @@ const MovieList = ({
         if (ignore) return;
 
         setAllMoviesFiltered(data.results);
+        setResultsQuery(searchQuery);
         setLoading(false);
       } catch (err) {
         if (ignore) return;
@@ -89,7 +90,14 @@ const MovieList = ({
   const handleSort = (e) => {
     setSortBy(e.target.value);
   };
-
+  const suggestions =
+    !loading &&
+    !error &&
+    searchQuery !== "" &&
+    query.trim() === searchQuery &&
+    resultsQuery === searchQuery
+      ? allMoviesFiltered.slice(0, 5)
+      : [];
   const movies = allMoviesFiltered.filter(
     (movie) => movie.vote_average >= givingRating,
   );
@@ -129,6 +137,7 @@ const MovieList = ({
           query={query}
           onQueryChange={setQuery}
           onSearch={setSearchQuery}
+          suggestions={suggestions}
         />
       </header>
       <div className="movie_toolbar">
