@@ -4,12 +4,15 @@ import MovieCard from "./MovieCard";
 import FilterMovies from "./FilterMovies";
 import SortMovies from "./SortMovies";
 import MovieCardSkeleton from "./MovieCardSkeleton";
+import SearchMovies from "./SearchMovies";
 const MovieList = ({ category }) => {
   const [allMoviesFiltered, setAllMoviesFiltered] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [givingRating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     let ignore = false;
@@ -31,9 +34,19 @@ const MovieList = ({ category }) => {
       setLoading(true);
 
       try {
-        const endpoint = `https://api.themoviedb.org/3/movie/${category}`;
-        const res = await fetch(`${endpoint}?api_key=${API_KEY}`);
+        const endpoint = searchQuery
+          ? "https://api.themoviedb.org/3/search/movie"
+          : `https://api.themoviedb.org/3/movie/${category}`;
 
+        const params = new URLSearchParams({
+          api_key: API_KEY,
+        });
+
+        if (searchQuery) {
+          params.set("query", searchQuery);
+        }
+
+        const res = await fetch(`${endpoint}?${params.toString()}`);
         if (!res.ok) {
           throw new Error(`TMDB request failed with status ${res.status}`);
         }
@@ -63,7 +76,7 @@ const MovieList = ({ category }) => {
     return () => {
       ignore = true;
     };
-  }, [category]);
+  }, [category, searchQuery]);
 
   const handleFilter = (rating) => {
     setRating((currentRating) => (currentRating === rating ? 0 : rating));
@@ -99,18 +112,28 @@ const MovieList = ({ category }) => {
   return (
     <section className="movie_list">
       <header className="movieheader">
-        <h2 className="center_el movieh2head">
-          {category.toUpperCase().replace("_", "-")}
+        <h2 className="movieh2head">
+          {searchQuery
+            ? `Results for “${searchQuery}”`
+            : { popular: "Popular", top_rated: "Top-rated", upcoming: "Upcoming" }[category]}
         </h2>
-        <div className="center_el movie_listadd">
+        <SearchMovies
+          query={query}
+          onQueryChange={setQuery}
+          onSearch={setSearchQuery}
+        />
+      </header>
+      <div className="movie_toolbar">
+        <div className="movie_rating_controls">
+          <span className="movie_filter_label">Minimum rating</span>
           <FilterMovies
             givingRating={givingRating}
             onRatingButtonClick={handleFilter}
             ratings={[6, 7, 8]}
           />
-          <SortMovies sortBy={sortBy} handleSort={handleSort} />
         </div>
-      </header>
+        <SortMovies sortBy={sortBy} handleSort={handleSort} />
+      </div>
       <div className="movie_shows">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <MovieCardSkeleton key={i} />)
@@ -121,7 +144,13 @@ const MovieList = ({ category }) => {
         ) : movies.length > 0 ? (
           movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
         ) : (
-          <p className="noMovies">No movies found above this rating!</p>
+          <p className="noMovies" role="status">
+            {allMoviesFiltered.length === 0
+              ? searchQuery
+                ? `No movies found for “${searchQuery}”. Try another title.`
+                : "No movies available in this category."
+              : "No movies match this rating. Try a lower rating or turn off the filter."}
+          </p>
         )}
       </div>
     </section>
