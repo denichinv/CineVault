@@ -191,7 +191,7 @@ describe("MovieList", () => {
     fireEvent.click(screen.getByText("8+"));
 
     expect(
-      screen.getByText(/No movies found above this rating!/i),
+      screen.getByText(/No movies match this rating/i),
     ).toBeInTheDocument();
 
     expect(screen.queryByText("6.5")).not.toBeInTheDocument();
@@ -350,7 +350,9 @@ describe("MovieList", () => {
       json: async () => ({ results: [] }),
     });
     render(<MovieList category="popular" />);
-    expect(await screen.findByText(/No movies found/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/No movies available in this category/),
+    ).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
@@ -408,5 +410,193 @@ describe("MovieList", () => {
 
     expect(screen.getByText("6.2")).toBeInTheDocument();
     expect(screen.queryByText("8.5")).not.toBeInTheDocument();
+  });
+  it("searches TMDB and restores the category when cleared", async () => {
+    const searchMovie = {
+      ...mockMovies[0],
+      id: 99,
+      original_title: "The Matrix",
+    };
+
+    fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: mockMovies }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: [searchMovie] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: mockMovies }),
+      });
+
+    render(<MovieList category="popular" />);
+
+    await screen.findByRole("heading", { name: "High Rated Movie" });
+
+    const input = screen.getByRole("searchbox", {
+      name: "Search movies",
+    });
+
+    fireEvent.change(input, {
+      target: { value: "  The Matrix  " },
+    });
+
+    // Typing alone should not send a request.
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Search" }));
+
+    await screen.findByRole("heading", {
+      name: "The Matrix",
+      level: 3,
+    });
+
+    const searchUrl = new URL(fetch.mock.calls[1][0]);
+
+    expect(searchUrl.pathname).toBe("/3/search/movie");
+    expect(searchUrl.searchParams.get("query")).toBe("The Matrix");
+    expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear" }));
+
+    await screen.findByRole("heading", { name: "High Rated Movie" });
+
+    const categoryUrl = new URL(fetch.mock.calls[2][0]);
+
+    expect(categoryUrl.pathname).toBe("/3/movie/popular");
+    expect(categoryUrl.searchParams.has("query")).toBe(false);
+    expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(3);
+    expect(input).toHaveValue("");
+    expect(input).toHaveFocus();
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+  it("shows a search-specific message when no movies are found", async () => {
+    fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: mockMovies }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: [] }),
+      });
+
+    render(<MovieList category="popular" />);
+
+    await screen.findByRole("heading", { name: "High Rated Movie" });
+
+    fireEvent.change(screen.getByRole("searchbox", { name: "Search movies" }), {
+      target: { value: "zzzz-no-such-movie" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Search" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "No movies found for “zzzz-no-such-movie”. Try another title.",
+    );
+
+    expect(screen.queryByRole("heading", { level: 3 })).not.toBeInTheDocument();
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+  it("keeps the latest search results when an older search finishes last", async () => {
+    let resolveOldSearch;
+
+    const oldSearch = new Promise((resolve) => {
+      resolveOldSearch = resolve;
+    });
+
+    const matrix = {
+      ...mockMovies[0],
+      id: 101,
+      original_title: "The Matrix",
+    };
+
+    const inception = {
+      ...mockMovies[1],
+      id: 102,
+      original_title: "Inception",
+    };
+
+    fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: mockMovies }),
+      })
+      .mockReturnValueOnce(oldSearch)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: [inception] }),
+      });
+
+    render(<MovieList category="popular" />);
+
+    await screen.findByRole("heading", { name: "High Rated Movie" });
+
+    const input = screen.getByRole("searchbox", { name: "Search movies" });
+    const searchButton = screen.getByRole("button", { name: "Search" });
+
+    fireEvent.change(input, { target: { value: "The Matrix" } });
+    fireEvent.click(searchButton);
+
+    fireEvent.change(input, { target: { value: "Inception" } });
+    fireEvent.click(searchButton);
+
+    await screen.findByRole("heading", { name: "Inception", level: 3 });
+
+    await act(async () => {
+      resolveOldSearch({
+        ok: true,
+        json: async () => ({ results: [matrix] }),
+      });
+      await oldSearch;
+    });
+
+    expect(
+      screen.getByRole("heading", { name: "Inception", level: 3 }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByRole("heading", { name: "The Matrix", level: 3 }),
+    ).not.toBeInTheDocument();
+  });
+  it("filters and sorts search results without fetching again", async () => {
+    fetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: [mockMovies[1]] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ results: mockMovies }),
+      });
+
+    render(<MovieList category="popular" />);
+
+    await screen.findByRole("heading", { name: "Low Rated Movie" });
+
+    fireEvent.change(screen.getByRole("searchbox", { name: "Search movies" }), {
+      target: { value: "Movie" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Search" }));
+
+    await screen.findByRole("heading", { name: "High Rated Movie" });
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Sort movies" }), {
+      target: { value: "rating" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "7+", exact: true }));
+
+    const titles = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((heading) => heading.textContent);
+
+    expect(titles).toEqual(["High Rated Movie", "Good Movie"]);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 });
