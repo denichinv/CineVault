@@ -5,15 +5,19 @@ import FilterMovies from "./FilterMovies";
 import SortMovies from "./SortMovies";
 import MovieCardSkeleton from "./MovieCardSkeleton";
 import SearchMovies from "./SearchMovies";
-const MovieList = ({ category }) => {
+const MovieList = ({
+  category,
+  query,
+  setQuery,
+  searchQuery,
+  setSearchQuery,
+}) => {
   const [allMoviesFiltered, setAllMoviesFiltered] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [givingRating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-
+  const [resultsQuery, setResultsQuery] = useState("");
   useEffect(() => {
     let ignore = false;
 
@@ -60,6 +64,7 @@ const MovieList = ({ category }) => {
         if (ignore) return;
 
         setAllMoviesFiltered(data.results);
+        setResultsQuery(searchQuery);
         setLoading(false);
       } catch (err) {
         if (ignore) return;
@@ -85,7 +90,14 @@ const MovieList = ({ category }) => {
   const handleSort = (e) => {
     setSortBy(e.target.value);
   };
-
+  const suggestions =
+    !loading &&
+    !error &&
+    searchQuery !== "" &&
+    query.trim() === searchQuery &&
+    resultsQuery === searchQuery
+      ? allMoviesFiltered.slice(0, 5)
+      : [];
   const movies = allMoviesFiltered.filter(
     (movie) => movie.vote_average >= givingRating,
   );
@@ -115,12 +127,17 @@ const MovieList = ({ category }) => {
         <h2 className="movieh2head">
           {searchQuery
             ? `Results for “${searchQuery}”`
-            : { popular: "Popular", top_rated: "Top-rated", upcoming: "Upcoming" }[category]}
+            : {
+                popular: "Popular",
+                top_rated: "Top-rated",
+                upcoming: "Upcoming",
+              }[category]}
         </h2>
         <SearchMovies
           query={query}
           onQueryChange={setQuery}
           onSearch={setSearchQuery}
+          suggestions={suggestions}
         />
       </header>
       <div className="movie_toolbar">

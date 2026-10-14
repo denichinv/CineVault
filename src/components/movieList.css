@@ -105,7 +105,12 @@
 /* The bundled display font is weight 100; use a readable UI face for controls. */
 .movie_filter_item,
 .movie_search button {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   font-weight: 700;
 }
 
@@ -163,17 +168,25 @@
 }
 
 @media (max-width: 600px) {
-  .movie_list { padding: 24px 16px; }
+  .movie_list {
+    padding: 24px 16px;
+  }
   .movie_shows {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px 12px;
   }
-  .movie_title { font-size: 0.875rem; }
-  .movie_metadata { font-size: 0.75rem; }
+  .movie_title {
+    font-size: 0.875rem;
+  }
+  .movie_metadata {
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 359px) {
-  .movie_shows { grid-template-columns: 1fr; }
+  .movie_shows {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Search bar styles */
@@ -239,7 +252,12 @@
   border-radius: 8px;
   background: transparent;
   color: #ffffff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
@@ -283,5 +301,109 @@
 
   .movie_search button {
     flex: 1;
+  }
+}
+/* Movie search suggestions */
+.movie_suggestions {
+  --anchor-gap: 8px;
+  --anchor-padding: 12px;
+
+  width: var(--input-width);
+  max-width: calc(100vw - 24px);
+  max-height: min(360px, 50dvh);
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 30;
+
+  padding: 6px;
+  border: 1px solid #555555;
+  border-radius: 12px;
+  background: #1c1c1c;
+  color: #ffffff;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  text-align: left;
+}
+
+.movie_suggestion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.movie_suggestion[data-focus] {
+  background: #2c2c2c;
+  box-shadow: inset 3px 0 #ff416c;
+}
+
+.movie_suggestion:active {
+  background: #121212;
+}
+
+.movie_suggestion_poster {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 60px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #2c2c2c;
+  color: #ffffff;
+}
+
+.movie_suggestion_poster img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie_suggestion_details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.movie_suggestion_title {
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.movie_suggestion_year {
+  color: rgb(255 255 255 / 65%);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+@media (forced-colors: active) {
+  .movie_suggestion[data-focus] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+@media (max-width: 600px) {
+  .movie_suggestions {
+    /* Leave room for the wrapped buttons beneath the input. */
+    --anchor-gap: 64px;
   }
 }

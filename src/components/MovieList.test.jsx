@@ -6,7 +6,23 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import MovieList from "./MovieList";
+import { useState } from "react";
+import MovieListComponent from "./MovieList";
+
+function MovieList({ category }) {
+  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  return (
+    <MovieListComponent
+      category={category}
+      query={query}
+      setQuery={setQuery}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+    />
+  );
+}
 
 describe("MovieList", () => {
   const mockMovies = [
@@ -436,7 +452,7 @@ describe("MovieList", () => {
 
     await screen.findByRole("heading", { name: "High Rated Movie" });
 
-    const input = screen.getByRole("searchbox", {
+    const input = screen.getByRole("combobox", {
       name: "Search movies",
     });
 
@@ -488,7 +504,7 @@ describe("MovieList", () => {
 
     await screen.findByRole("heading", { name: "High Rated Movie" });
 
-    fireEvent.change(screen.getByRole("searchbox", { name: "Search movies" }), {
+    fireEvent.change(screen.getByRole("combobox", { name: "Search movies" }), {
       target: { value: "zzzz-no-such-movie" },
     });
 
@@ -536,7 +552,7 @@ describe("MovieList", () => {
 
     await screen.findByRole("heading", { name: "High Rated Movie" });
 
-    const input = screen.getByRole("searchbox", { name: "Search movies" });
+    const input = screen.getByRole("combobox", { name: "Search movies" });
     const searchButton = screen.getByRole("button", { name: "Search" });
 
     fireEvent.change(input, { target: { value: "The Matrix" } });
@@ -578,7 +594,7 @@ describe("MovieList", () => {
 
     await screen.findByRole("heading", { name: "Low Rated Movie" });
 
-    fireEvent.change(screen.getByRole("searchbox", { name: "Search movies" }), {
+    fireEvent.change(screen.getByRole("combobox", { name: "Search movies" }), {
       target: { value: "Movie" },
     });
 
